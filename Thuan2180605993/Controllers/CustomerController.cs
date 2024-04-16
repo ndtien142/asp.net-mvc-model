@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Thuan2180605993.Data;
-using Thuan2180605993.Models.Entites;
+using Thuan2180605993.Models;
 
 namespace Thuan2180605993.Controllers
 {
     public class CustomerController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ShopDbContext _context;
 
-        public CustomerController(ApplicationDbContext context)
+        public CustomerController(ShopDbContext context)
         {
             _context = context;
         }
@@ -17,7 +16,7 @@ namespace Thuan2180605993.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Customer.ToListAsync());
+            return View(await _context.Customers.ToListAsync());
         }
 
         // GET: Customers/Details/5
@@ -27,7 +26,7 @@ namespace Thuan2180605993.Controllers
             {
                 return BadRequest();
             }
-            var customer = await _context.Customer.FirstOrDefaultAsync(m => m.ID == id);
+            var customer = await _context.Customers.FirstOrDefaultAsync(m => m.Id == id);
             if (customer == null)
             {
                 return NotFound();
@@ -62,7 +61,7 @@ namespace Thuan2180605993.Controllers
             {
                 return BadRequest();
             }
-            var customer = await _context.Customer.FindAsync(id);
+            var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
                 return NotFound();
@@ -75,7 +74,7 @@ namespace Thuan2180605993.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("ID,Username,Passwords,Name,Birthday,Address,EmailAddress,Gender,Phone,Picture")] Customer customer)
         {
-            if (id != customer.ID)
+            if (id != customer.Id)
             {
                 return BadRequest();
             }
@@ -89,7 +88,7 @@ namespace Thuan2180605993.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CustomerExists(customer.ID))
+                    if (!CustomerExists(customer.Id))
                     {
                         return NotFound();
                     }
@@ -110,7 +109,7 @@ namespace Thuan2180605993.Controllers
             {
                 return BadRequest();
             }
-            var customer = await _context.Customer.FirstOrDefaultAsync(m => m.ID == id);
+            var customer = await _context.Customers.FirstOrDefaultAsync(m => m.Id == id);
             if (customer == null)
             {
                 return NotFound();
@@ -123,15 +122,15 @@ namespace Thuan2180605993.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var customer = await _context.Customer.FindAsync(id);
-            _context.Customer.Remove(customer);
+            var customer = await _context.Customers.FindAsync(id);
+            _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool CustomerExists(long id)
         {
-            return _context.Customer.Any(e => e.ID == id);
+            return _context.Customers.Any(e => e.Id == id);
         }
     }
 }

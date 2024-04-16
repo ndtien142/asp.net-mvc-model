@@ -1,8 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Identity;
 using Thuan2180605993.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("ApplicationIdentityContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationIdentityContextConnection' not found.");
+
+builder.Services.AddDbContext<ApplicationIdentityContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationIdentityContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -14,9 +20,6 @@ builder.Services.AddControllersWithViews()
 
 // Add Session
 builder.Services.AddSession();
-
-// Connect Database
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ShopPortal")));
 
 var app = builder.Build();
 
@@ -47,4 +50,5 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapRazorPages();
 app.Run();
